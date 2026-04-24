@@ -149,8 +149,12 @@ function handleAutoAdd() {
 /* RESIZE */
 function resizeCanvas() {
   const size = canvas.clientWidth;
-  canvas.width = size;
-  canvas.height = size;
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+
+  ctx.scale(dpr, dpr);
 }
 
 /* DRAW */
@@ -167,7 +171,8 @@ function draw() {
   const thickness = size * 0.12;
   const overflowRadius = baseRadius + thickness;
 
-  ctx.clearRect(0,0,size,size);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset scaling each draw
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // base
   ctx.beginPath();
