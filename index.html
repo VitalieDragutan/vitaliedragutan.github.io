@@ -5,10 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Personal Site</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.6; }
-    h1 { color: #336699; }
-    nav a { margin: 0 1rem; }
-    section { margin-top: 2rem; }
+/* Theme toggle styles */
+#theme-toggle-button {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 7em;
+  cursor: pointer;
+}
+
+#toggle {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#container,
+#patches,
+#stars,
+#button,
+#sun,
+#moon,
+#cloud {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* night sky background */
+#toggle:checked + svg #container {
+  fill: #2b4360;
+}
+
+/* move button */
+#toggle:checked + svg #button {
+  transform: translate(28px, 2.333px);
+}
+
+/* sun/moon toggle */
+#sun { opacity: 1; }
+#toggle:checked + svg #sun { opacity: 0; }
+
+#moon { opacity: 0; }
+#toggle:checked + svg #moon { opacity: 1; }
+
+/* clouds/stars */
+#cloud { opacity: 1; }
+#toggle:checked + svg #cloud { opacity: 0; }
+
+#stars { opacity: 0; }
+#toggle:checked + svg #stars { opacity: 1; }
+
+/* Optional: dark mode styles */
+body.dark {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+body.dark h1 {
+  color: #8ab4f8;
+}
   </style>
 </head>
 <body>
