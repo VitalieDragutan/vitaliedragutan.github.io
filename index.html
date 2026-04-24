@@ -12,7 +12,6 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
 }
 
-/* LAYOUT */
 .layout {
   display: flex;
   gap: 40px;
@@ -21,43 +20,61 @@ body {
   flex-wrap: wrap;
 }
 
-/* INPUTS */
+/* INPUT PANEL */
 .inputs {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 220px;   /* slightly smaller */;
+  gap: 18px;
+  width: 320px;
 }
 
-/* SCROLLABLE EXPENSE LIST */
-* {
-  box-sizing: border-box;
+.section-title {
+  font-weight: 600;
+  margin-top: 10px;
 }
 
-.expense-list {
+.section-sub {
+  font-size: 12px;
+  color: #666;
+  margin-top: -10px;
+}
+
+/* rows */
+.row {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 250px;
-  overflow-y: auto;
-  overflow-x: hidden; /* removes bottom scrollbar */
-  padding-right: 5px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.icon {
+  width: 28px;
+}
+
+.label {
+  flex: 1;
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 input {
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  width: 100%;
-  max-width: 200px; /* caps input width */
+  width: 90px;
 }
 
 /* CHART */
 .chart-box {
   position: relative;
-  width: 100%;
-  max-width: 320px;
-  aspect-ratio: 1;
+  width: 320px;
+  height: 320px;
+  flex: 0 0 320px; /* prevents flex resizing */
 }
 
 canvas {
@@ -73,7 +90,6 @@ canvas {
   text-align: center;
 }
 
-/* MOBILE */
 @media (max-width: 600px) {
   .layout {
     flex-direction: column;
@@ -88,8 +104,39 @@ canvas {
 <div class="layout">
 
   <div class="inputs">
-    <input id="income" type="number" placeholder="Income" />
-    <div id="expensesContainer" class="expense-list"></div>
+
+    <!-- INCOME -->
+    <div class="section-title">Monthly income</div>
+    <div class="section-sub">
+      What is your monthly net income? In addition to salary, other income such as rent, dividends, etc. are also included.
+    </div>
+
+    <div class="row">
+      <div class="icon">💰</div>
+      <div class="label">Household income</div>
+      <div class="amount">
+        <input id="income" type="number" value="0"/>
+        <span>€</span>
+      </div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div class="section-title">Monthly expenses</div>
+    <div class="section-sub">
+      What do you spend money on each month? Estimate your monthly costs in the following categories.
+    </div>
+
+    <div class="row"><div class="icon">🏡</div><div class="label">Housing</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">☂️</div><div class="label">Insurances</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">🥕</div><div class="label">Food & drugstore</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">🚎</div><div class="label">Mobility</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">👕</div><div class="label">Shopping</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">🎧</div><div class="label">Sub­scrip­tions</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">🍸</div><div class="label">Going out</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">⛱️</div><div class="label">Experiences</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">🤝</div><div class="label">Donations</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+    <div class="row"><div class="icon">✌️</div><div class="label">Other</div><div class="amount"><input class="expense-input" type="number" value="0"><span>€</span></div></div>
+
   </div>
 
   <div class="chart-box">
@@ -108,7 +155,9 @@ const canvas = document.getElementById("chart");
 const ctx = canvas.getContext("2d");
 const incomeInput = document.getElementById("income");
 const incomeText = document.getElementById("incomeText");
-const container = document.getElementById("expensesContainer");
+
+/* NOW STATIC INPUTS */
+const expenseInputs = Array.from(document.querySelectorAll(".expense-input"));
 
 const colors = [
 "#243e92","#3c59c0","#5a7fe0",
@@ -118,35 +167,6 @@ const colors = [
 "#c93a3a","#e55252","#ff7a7a"
 ];
 
-const MAX = 15;
-let expenseInputs = [];
-
-/* INIT */
-for (let i = 0; i < 4; i++) addExpense();
-
-function addExpense() {
-  if (expenseInputs.length >= MAX) return;
-
-  const input = document.createElement("input");
-  input.type = "number";
-  input.placeholder = "Expense";
-
-  input.addEventListener("input", () => {
-    handleAutoAdd();
-    update();
-  });
-
-  container.appendChild(input);
-  expenseInputs.push(input);
-}
-
-function handleAutoAdd() {
-  if (expenseInputs.length >= MAX) return;
-  const last = expenseInputs[expenseInputs.length - 1];
-  if (last.value !== "") addExpense();
-}
-
-/* RESIZE */
 function resizeCanvas() {
   const size = canvas.clientWidth;
   const dpr = window.devicePixelRatio || 1;
@@ -154,14 +174,13 @@ function resizeCanvas() {
   canvas.width = size * dpr;
   canvas.height = size * dpr;
 
-  ctx.scale(dpr, dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-/* DRAW */
 function draw() {
   resizeCanvas();
 
-  const size = canvas.width;
+  const size = canvas.clientWidth;
   const center = size / 2;
 
   const income = parseFloat(incomeInput.value) || 0;
@@ -171,10 +190,8 @@ function draw() {
   const thickness = size * 0.12;
   const overflowRadius = baseRadius + thickness;
 
-  ctx.setTransform(1, 0, 0, 1, 0, 0); // reset scaling each draw
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // base
   ctx.beginPath();
   ctx.arc(center, center, baseRadius, 0, Math.PI * 2);
   ctx.strokeStyle = "#dfeded";
@@ -187,7 +204,7 @@ function draw() {
   }
 
   let start = -Math.PI / 2;
-  const gap = 0.025; // slightly bigger for visibility
+  const gap = 0.025;
   let used = 0;
 
   values.forEach((value, i) => {
@@ -196,16 +213,12 @@ function draw() {
     let inside = Math.max(0, Math.min(value, income - used));
     let overflow = Math.max(0, value - inside);
 
-    // INSIDE
     if (inside > 0) {
       let angle = (inside / income) * Math.PI * 2;
 
       if (angle > gap) {
         ctx.beginPath();
-        ctx.arc(
-          center,
-          center,
-          baseRadius,
+        ctx.arc(center, center, baseRadius,
           start + gap/2,
           start + gap/2 + (angle - gap)
         );
@@ -218,16 +231,12 @@ function draw() {
       used += inside;
     }
 
-    // OVERFLOW (WITH SAME GAP LOGIC)
     if (overflow > 0) {
       let angle = (overflow / income) * Math.PI * 2;
 
       if (angle > gap) {
         ctx.beginPath();
-        ctx.arc(
-          center,
-          center,
-          overflowRadius,
+        ctx.arc(center, center, overflowRadius,
           start + gap/2,
           start + gap/2 + (angle - gap)
         );
@@ -243,12 +252,9 @@ function draw() {
   incomeText.textContent = income.toLocaleString();
 }
 
-function update() {
-  draw();
-}
-
+incomeInput.addEventListener("input", draw);
+expenseInputs.forEach(i => i.addEventListener("input", draw));
 window.addEventListener("resize", draw);
-incomeInput.addEventListener("input", update);
 
 draw();
 </script>
