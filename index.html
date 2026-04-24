@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Personal Site</title>
 
-  <!-- Tailwind (THIS MAKES YOUR CARD WORK) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,6 +17,7 @@
     nav a { margin: 0 1rem; }
     section { margin-top: 2rem; }
 
+    /* DARK MODE */
     body.dark {
       background-color: #1e1e1e;
       color: #f1f1f1;
@@ -29,8 +27,9 @@
       color: #8ab4f8;
     }
 
-    /* toggle */
+    /* TOGGLE SWITCH */
     #theme-toggle-button {
+      font-size: 17px;
       display: inline-block;
       width: 7em;
       cursor: pointer;
@@ -49,7 +48,7 @@
     #sun,
     #moon,
     #cloud {
-      transition: all 0.25s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     #toggle:checked + svg #container {
@@ -76,100 +75,63 @@
 
 <body>
 
-<!-- TOGGLE -->
-<label id="theme-toggle-button">
-  <input type="checkbox" id="toggle">
+  <!-- THEME TOGGLE -->
+  <label id="theme-toggle-button">
+    <input type="checkbox" id="toggle">
 
-  <svg viewBox="0 0 64 32" width="100%">
-    <rect id="container" width="64" height="32" rx="16" fill="#87ceeb"/>
-    <circle id="sun" cx="16" cy="16" r="6" fill="#FFD700"/>
-    <circle id="moon" cx="48" cy="16" r="6" fill="#fff"/>
-    <circle id="button" cx="16" cy="16" r="10" fill="#fff"/>
-    <ellipse id="cloud" cx="40" cy="20" rx="10" ry="5" fill="#fff"/>
+    <svg viewBox="0 0 64 32" width="100%" height="100%">
+      <rect id="container" width="64" height="32" rx="16" fill="#87ceeb"/>
 
-    <g id="stars">
-      <circle cx="50" cy="10" r="1.5" fill="#fff"/>
-      <circle cx="55" cy="15" r="1" fill="#fff"/>
-    </g>
-  </svg>
-</label>
+      <!-- Sun -->
+      <circle id="sun" cx="16" cy="16" r="6" fill="#FFD700"/>
 
-<h1>Welcome Bubu</h1>
+      <!-- Moon -->
+      <circle id="moon" cx="48" cy="16" r="6" fill="#FFF"/>
 
-<nav>
-  <a href="#finance">Finance</a>
-  <a href="#faith">Faith</a>
-  <a href="#architecture">Architecture</a>
-</nav>
+      <!-- Button -->
+      <circle id="button" cx="16" cy="16" r="10" fill="#fff"/>
 
-<!-- YOUR FINANCE SECTION -->
-<section id="finance">
-  <h2>Finance</h2>
-  <p>Here I’ll share everything I know about managing money, investing, and budgeting.</p>
+      <!-- Clouds -->
+      <ellipse id="cloud" cx="40" cy="20" rx="10" ry="5" fill="#fff"/>
 
-  <!-- 💰 YOUR NEW CARD (Uiverse) -->
-  <div class="group relative w-80 overflow-hidden rounded-2xl bg-neutral-950 p-6 font-sans shadow-2xl mt-6">
+      <!-- Stars -->
+      <g id="stars">
+        <circle cx="50" cy="10" r="1.5" fill="#fff"/>
+        <circle cx="55" cy="15" r="1" fill="#fff"/>
+      </g>
+    </svg>
+  </label>
 
-    <div class="absolute -top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-lime-500/10 blur-3xl transition-all duration-700 group-hover:bg-lime-500/15"></div>
+  <h1>Welcome Bubu</h1>
 
-    <div class="relative flex flex-col gap-5">
+  <nav>
+    <a href="#finance">Finance</a>
+    <a href="#faith">Faith</a>
+    <a href="#architecture">Architecture</a>
+  </nav>
 
-      <div class="flex items-start justify-between border-b border-neutral-800 pb-5">
-        <div class="flex items-center gap-3">
+  <section id="finance">
+    <h2>Finance</h2>
+    <p>Here I’ll share everything I know about managing money, investing, and budgeting.</p>
+  </section>
 
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-lime-400/10">
-            📊
-          </div>
+  <section id="faith">
+    <h2>Faith</h2>
+    <p>Reflections, beliefs, and spiritual lessons I’ve learned.</p>
+  </section>
 
-          <div>
-            <p class="font-semibold text-neutral-200">Monthly Balance</p>
-            <p class="text-xs text-neutral-500">Updated just now</p>
-          </div>
+  <section id="architecture">
+    <h2>Architecture</h2>
+    <p>My thoughts on design, form, function, and history in architecture.</p>
+  </section>
 
-        </div>
-      </div>
+  <script>
+    const toggle = document.getElementById('toggle');
 
-      <div class="flex divide-x divide-neutral-800">
-
-        <div class="flex-1 pr-6">
-          <p class="text-xs font-medium text-neutral-500">Revenue</p>
-          <p class="text-xl font-semibold text-neutral-100">$51,274</p>
-          <p class="mt-1 text-xs font-medium text-lime-400">+8.5%</p>
-        </div>
-
-        <div class="flex-1 pl-6">
-          <p class="text-xs font-medium text-neutral-500">Costs</p>
-          <p class="text-xl font-semibold text-neutral-100">$12,818</p>
-          <p class="mt-1 text-xs font-medium text-red-400">+2.1%</p>
-        </div>
-
-      </div>
-
-      <button class="w-full rounded-lg border border-lime-400/50 px-4 py-2 text-sm font-medium text-lime-400 hover:bg-lime-400 hover:text-black">
-        View Full Report
-      </button>
-
-    </div>
-  </div>
-</section>
-
-<section id="faith">
-  <h2>Faith</h2>
-  <p>Reflections, beliefs, and spiritual lessons I’ve learned.</p>
-</section>
-
-<section id="architecture">
-  <h2>Architecture</h2>
-  <p>My thoughts on design, form, function, and history in architecture.</p>
-</section>
-
-<script>
-  const toggle = document.getElementById('toggle');
-
-  toggle.addEventListener('change', () => {
-    document.body.classList.toggle('dark', toggle.checked);
-  });
-</script>
+    toggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark', toggle.checked);
+    });
+  </script>
 
 </body>
 </html>
