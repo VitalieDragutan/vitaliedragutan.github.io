@@ -10,22 +10,25 @@ body {
   margin: 0;
   background: #f4f6fb;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
+/* MAIN LAYOUT */
 .layout {
   display: flex;
-  gap: 60px;
+  gap: 40px;
+  padding: 20px;
   align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap; /* ⭐ allows stacking */
 }
 
+/* INPUTS */
 .inputs {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .expense-list {
@@ -35,18 +38,27 @@ body {
 }
 
 input {
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  width: 200px;
+  width: 100%;
+  font-size: 16px; /* better mobile typing */
 }
 
+/* CHART */
 .chart-box {
   position: relative;
-  width: 340px;
-  height: 340px;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1; /* keeps it square */
 }
 
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* CENTER TEXT */
 .center {
   position: absolute;
   top: 50%;
@@ -57,6 +69,23 @@ input {
 
 .center h2 {
   margin: 0;
+  font-size: 22px;
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 600px) {
+  .layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .inputs {
+    max-width: 100%;
+  }
+
+  .chart-box {
+    max-width: 260px;
+  }
 }
 </style>
 </head>
@@ -71,7 +100,7 @@ input {
   </div>
 
   <div class="chart-box">
-    <canvas id="chart" width="340" height="340"></canvas>
+    <canvas id="chart"></canvas>
 
     <div class="center">
       <h2 id="incomeText">0</h2>
@@ -82,7 +111,8 @@ input {
 </div>
 
 <script>
-const ctx = document.getElementById("chart").getContext("2d");
+const canvas = document.getElementById("chart");
+const ctx = canvas.getContext("2d");
 const incomeInput = document.getElementById("income");
 const incomeText = document.getElementById("incomeText");
 const container = document.getElementById("expensesContainer");
@@ -98,7 +128,7 @@ const colors = [
 const MAX = 15;
 let expenseInputs = [];
 
-/* initial */
+/* INITIAL */
 for (let i = 0; i < 4; i++) addExpense();
 
 function addExpense() {
@@ -123,19 +153,30 @@ function handleAutoAdd() {
   if (last.value !== "") addExpense();
 }
 
+/* RESPONSIVE CANVAS */
+function resizeCanvas() {
+  const size = canvas.clientWidth;
+  canvas.width = size;
+  canvas.height = size;
+}
+
 /* DRAW */
 function draw() {
+  resizeCanvas();
+
+  const size = canvas.width;
+  const center = size / 2;
+
   const income = parseFloat(incomeInput.value) || 0;
   const values = expenseInputs.map(i => parseFloat(i.value) || 0);
 
-  const center = 170;
-  const baseRadius = 120;
-  const thickness = 40;
-  const overflowRadius = baseRadius + 30;
+  const baseRadius = size * 0.35;
+  const thickness = size * 0.12;
+  const overflowRadius = baseRadius + thickness;
 
-  ctx.clearRect(0,0,340,340);
+  ctx.clearRect(0,0,size,size);
 
-  // base leftover
+  // base
   ctx.beginPath();
   ctx.arc(center, center, baseRadius, 0, Math.PI * 2);
   ctx.strokeStyle = "#dfeded";
@@ -149,7 +190,6 @@ function draw() {
 
   let start = -Math.PI / 2;
   const gap = 0.02;
-
   let used = 0;
 
   values.forEach((value, i) => {
@@ -158,7 +198,6 @@ function draw() {
     let inside = Math.max(0, Math.min(value, income - used));
     let overflow = Math.max(0, value - inside);
 
-    // --- INSIDE PART ---
     if (inside > 0) {
       let angle = (inside / income) * Math.PI * 2;
 
@@ -180,7 +219,6 @@ function draw() {
       used += inside;
     }
 
-    // --- OVERFLOW PART (OUTER RING) ---
     if (overflow > 0) {
       let overflowAngle = (overflow / income) * Math.PI * 2;
 
@@ -193,7 +231,7 @@ function draw() {
         start + overflowAngle
       );
       ctx.strokeStyle = colors[i % colors.length];
-      ctx.lineWidth = 12;
+      ctx.lineWidth = thickness * 0.3;
       ctx.stroke();
 
       start += overflowAngle;
@@ -207,6 +245,7 @@ function update() {
   draw();
 }
 
+window.addEventListener("resize", draw);
 incomeInput.addEventListener("input", update);
 
 draw();
