@@ -1,137 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Personal Site</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finance Dashboard</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 2rem;
-      line-height: 1.6;
-      transition: background-color 0.3s, color 0.3s;
-    }
+<style>
+body {
+  margin: 0;
+  background: #f4f6fb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
-    h1 { color: #336699; }
-    nav a { margin: 0 1rem; }
-    section { margin-top: 2rem; }
+.layout {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+}
 
-    /* DARK MODE */
-    body.dark {
-      background-color: #1e1e1e;
-      color: #f1f1f1;
-    }
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    body.dark h1 {
-      color: #8ab4f8;
-    }
+.expense-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    /* TOGGLE SWITCH */
-    #theme-toggle-button {
-      font-size: 17px;
-      display: inline-block;
-      width: 7em;
-      cursor: pointer;
-      margin-bottom: 1rem;
-    }
+input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
 
-    #toggle {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+.chart-box {
+  position: relative;
+  width: 340px;
+  height: 340px;
+}
 
-    #container,
-    #stars,
-    #button,
-    #sun,
-    #moon,
-    #cloud {
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
 
-    #toggle:checked + svg #container {
-      fill: #2b4360;
-    }
-
-    #toggle:checked + svg #button {
-      transform: translate(28px, 0);
-    }
-
-    #sun { opacity: 1; }
-    #toggle:checked + svg #sun { opacity: 0; }
-
-    #moon { opacity: 0; }
-    #toggle:checked + svg #moon { opacity: 1; }
-
-    #cloud { opacity: 1; }
-    #toggle:checked + svg #cloud { opacity: 0; }
-
-    #stars { opacity: 0; }
-    #toggle:checked + svg #stars { opacity: 1; }
-  </style>
+.center h2 {
+  margin: 0;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- THEME TOGGLE -->
-  <label id="theme-toggle-button">
-    <input type="checkbox" id="toggle">
+<div class="layout">
 
-    <svg viewBox="0 0 64 32" width="100%" height="100%">
-      <rect id="container" width="64" height="32" rx="16" fill="#87ceeb"/>
+  <div class="inputs">
+    <input id="income" type="number" placeholder="Income" />
+    <div id="expensesContainer" class="expense-list"></div>
+  </div>
 
-      <!-- Sun -->
-      <circle id="sun" cx="16" cy="16" r="6" fill="#FFD700"/>
+  <div class="chart-box">
+    <canvas id="chart" width="340" height="340"></canvas>
 
-      <!-- Moon -->
-      <circle id="moon" cx="48" cy="16" r="6" fill="#FFF"/>
+    <div class="center">
+      <h2 id="incomeText">0</h2>
+      <span>Income</span>
+    </div>
+  </div>
 
-      <!-- Button -->
-      <circle id="button" cx="16" cy="16" r="10" fill="#fff"/>
+</div>
 
-      <!-- Clouds -->
-      <ellipse id="cloud" cx="40" cy="20" rx="10" ry="5" fill="#fff"/>
+<script>
+const ctx = document.getElementById("chart").getContext("2d");
+const incomeInput = document.getElementById("income");
+const incomeText = document.getElementById("incomeText");
+const container = document.getElementById("expensesContainer");
 
-      <!-- Stars -->
-      <g id="stars">
-        <circle cx="50" cy="10" r="1.5" fill="#fff"/>
-        <circle cx="55" cy="15" r="1" fill="#fff"/>
-      </g>
-    </svg>
-  </label>
+const colors = [
+"#243e92","#3c59c0","#5a7fe0",
+"#10312a","#174741","#0f615c",
+"#2ca153","#218f4a","#55cc80",
+"#fe7f07","#d46f05","#ffa03a",
+"#c93a3a","#e55252","#ff7a7a"
+];
 
-  <h1>Welcome Bubu</h1>
+const MAX = 15;
+let expenseInputs = [];
 
-  <nav>
-    <a href="#finance">Finance</a>
-    <a href="#faith">Faith</a>
-    <a href="#architecture">Architecture</a>
-  </nav>
+/* initial */
+for (let i = 0; i < 4; i++) addExpense();
 
-  <section id="finance">
-    <h2>Finance</h2>
-    <p>Here I’ll share everything I know about managing money, investing, and budgeting.</p>
-  </section>
+function addExpense() {
+  if (expenseInputs.length >= MAX) return;
 
-  <section id="faith">
-    <h2>Faith</h2>
-    <p>Reflections, beliefs, and spiritual lessons I’ve learned.</p>
-  </section>
+  const input = document.createElement("input");
+  input.type = "number";
+  input.placeholder = "Expense";
 
-  <section id="architecture">
-    <h2>Architecture</h2>
-    <p>My thoughts on design, form, function, and history in architecture.</p>
-  </section>
+  input.addEventListener("input", () => {
+    handleAutoAdd();
+    update();
+  });
 
-  <script>
-    const toggle = document.getElementById('toggle');
+  container.appendChild(input);
+  expenseInputs.push(input);
+}
 
-    toggle.addEventListener('change', () => {
-      document.body.classList.toggle('dark', toggle.checked);
-    });
-  </script>
+function handleAutoAdd() {
+  if (expenseInputs.length >= MAX) return;
+  const last = expenseInputs[expenseInputs.length - 1];
+  if (last.value !== "") addExpense();
+}
+
+/* DRAW */
+function draw() {
+  const income = parseFloat(incomeInput.value) || 0;
+  const values = expenseInputs.map(i => parseFloat(i.value) || 0);
+
+  const center = 170;
+  const baseRadius = 120;
+  const thickness = 40;
+  const overflowRadius = baseRadius + 30;
+
+  ctx.clearRect(0,0,340,340);
+
+  // base leftover
+  ctx.beginPath();
+  ctx.arc(center, center, baseRadius, 0, Math.PI * 2);
+  ctx.strokeStyle = "#dfeded";
+  ctx.lineWidth = thickness;
+  ctx.stroke();
+
+  if (income <= 0) {
+    incomeText.textContent = "0";
+    return;
+  }
+
+  let start = -Math.PI / 2;
+  const gap = 0.02;
+
+  let used = 0;
+
+  values.forEach((value, i) => {
+    if (value <= 0) return;
+
+    let inside = Math.max(0, Math.min(value, income - used));
+    let overflow = Math.max(0, value - inside);
+
+    // --- INSIDE PART ---
+    if (inside > 0) {
+      let angle = (inside / income) * Math.PI * 2;
+
+      if (angle > gap) {
+        ctx.beginPath();
+        ctx.arc(
+          center,
+          center,
+          baseRadius,
+          start + gap/2,
+          start + gap/2 + (angle - gap)
+        );
+        ctx.strokeStyle = colors[i % colors.length];
+        ctx.lineWidth = thickness;
+        ctx.stroke();
+      }
+
+      start += angle;
+      used += inside;
+    }
+
+    // --- OVERFLOW PART (OUTER RING) ---
+    if (overflow > 0) {
+      let overflowAngle = (overflow / income) * Math.PI * 2;
+
+      ctx.beginPath();
+      ctx.arc(
+        center,
+        center,
+        overflowRadius,
+        start,
+        start + overflowAngle
+      );
+      ctx.strokeStyle = colors[i % colors.length];
+      ctx.lineWidth = 12;
+      ctx.stroke();
+
+      start += overflowAngle;
+    }
+  });
+
+  incomeText.textContent = income.toLocaleString();
+}
+
+function update() {
+  draw();
+}
+
+incomeInput.addEventListener("input", update);
+
+draw();
+</script>
 
 </body>
 </html>
