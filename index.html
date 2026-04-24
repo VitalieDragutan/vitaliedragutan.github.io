@@ -4,69 +4,106 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>My Personal Site</title>
+
   <style>
-/* Theme toggle styles */
-#theme-toggle-button {
-  font-size: 17px;
-  position: relative;
-  display: inline-block;
-  width: 7em;
-  cursor: pointer;
-}
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-#toggle {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+    h1 { color: #336699; }
+    nav a { margin: 0 1rem; }
+    section { margin-top: 2rem; }
 
-#container,
-#patches,
-#stars,
-#button,
-#sun,
-#moon,
-#cloud {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    /* DARK MODE */
+    body.dark {
+      background-color: #1e1e1e;
+      color: #f1f1f1;
+    }
 
-/* night sky background */
-#toggle:checked + svg #container {
-  fill: #2b4360;
-}
+    body.dark h1 {
+      color: #8ab4f8;
+    }
 
-/* move button */
-#toggle:checked + svg #button {
-  transform: translate(28px, 2.333px);
-}
+    /* TOGGLE SWITCH */
+    #theme-toggle-button {
+      font-size: 17px;
+      display: inline-block;
+      width: 7em;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
 
-/* sun/moon toggle */
-#sun { opacity: 1; }
-#toggle:checked + svg #sun { opacity: 0; }
+    #toggle {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
 
-#moon { opacity: 0; }
-#toggle:checked + svg #moon { opacity: 1; }
+    #container,
+    #stars,
+    #button,
+    #sun,
+    #moon,
+    #cloud {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-/* clouds/stars */
-#cloud { opacity: 1; }
-#toggle:checked + svg #cloud { opacity: 0; }
+    #toggle:checked + svg #container {
+      fill: #2b4360;
+    }
 
-#stars { opacity: 0; }
-#toggle:checked + svg #stars { opacity: 1; }
+    #toggle:checked + svg #button {
+      transform: translate(28px, 0);
+    }
 
-/* Optional: dark mode styles */
-body.dark {
-  background-color: #1e1e1e;
-  color: #f1f1f1;
-}
+    #sun { opacity: 1; }
+    #toggle:checked + svg #sun { opacity: 0; }
 
-body.dark h1 {
-  color: #8ab4f8;
-}
+    #moon { opacity: 0; }
+    #toggle:checked + svg #moon { opacity: 1; }
+
+    #cloud { opacity: 1; }
+    #toggle:checked + svg #cloud { opacity: 0; }
+
+    #stars { opacity: 0; }
+    #toggle:checked + svg #stars { opacity: 1; }
   </style>
 </head>
+
 <body>
+
+  <!-- THEME TOGGLE -->
+  <label id="theme-toggle-button">
+    <input type="checkbox" id="toggle">
+
+    <svg viewBox="0 0 64 32" width="100%" height="100%">
+      <rect id="container" width="64" height="32" rx="16" fill="#87ceeb"/>
+
+      <!-- Sun -->
+      <circle id="sun" cx="16" cy="16" r="6" fill="#FFD700"/>
+
+      <!-- Moon -->
+      <circle id="moon" cx="48" cy="16" r="6" fill="#FFF"/>
+
+      <!-- Button -->
+      <circle id="button" cx="16" cy="16" r="10" fill="#fff"/>
+
+      <!-- Clouds -->
+      <ellipse id="cloud" cx="40" cy="20" rx="10" ry="5" fill="#fff"/>
+
+      <!-- Stars -->
+      <g id="stars">
+        <circle cx="50" cy="10" r="1.5" fill="#fff"/>
+        <circle cx="55" cy="15" r="1" fill="#fff"/>
+      </g>
+    </svg>
+  </label>
+
   <h1>Welcome Bubu</h1>
+
   <nav>
     <a href="#finance">Finance</a>
     <a href="#faith">Faith</a>
@@ -87,5 +124,14 @@ body.dark h1 {
     <h2>Architecture</h2>
     <p>My thoughts on design, form, function, and history in architecture.</p>
   </section>
+
+  <script>
+    const toggle = document.getElementById('toggle');
+
+    toggle.addEventListener('change', () => {
+      document.body.classList.toggle('dark', toggle.checked);
+    });
+  </script>
+
 </body>
 </html>
