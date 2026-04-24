@@ -12,14 +12,13 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
 }
 
-/* MAIN LAYOUT */
+/* LAYOUT */
 .layout {
   display: flex;
   gap: 40px;
   padding: 20px;
-  align-items: flex-start;
   justify-content: center;
-  flex-wrap: wrap; /* ⭐ allows stacking */
+  flex-wrap: wrap;
 }
 
 /* INPUTS */
@@ -27,22 +26,30 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%;
-  max-width: 280px;
+  width: 220px;   /* slightly smaller */;
+}
+
+/* SCROLLABLE EXPENSE LIST */
+* {
+  box-sizing: border-box;
 }
 
 .expense-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden; /* removes bottom scrollbar */
+  padding-right: 5px;
 }
 
 input {
-  padding: 12px;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
   width: 100%;
-  font-size: 16px; /* better mobile typing */
+  max-width: 200px; /* caps input width */
 }
 
 /* CHART */
@@ -50,15 +57,14 @@ input {
   position: relative;
   width: 100%;
   max-width: 320px;
-  aspect-ratio: 1; /* keeps it square */
+  aspect-ratio: 1;
 }
 
 canvas {
-  width: 100% !important;
-  height: 100% !important;
+  width: 100%;
+  height: 100%;
 }
 
-/* CENTER TEXT */
 .center {
   position: absolute;
   top: 50%;
@@ -67,24 +73,11 @@ canvas {
   text-align: center;
 }
 
-.center h2 {
-  margin: 0;
-  font-size: 22px;
-}
-
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 @media (max-width: 600px) {
   .layout {
     flex-direction: column;
     align-items: center;
-  }
-
-  .inputs {
-    max-width: 100%;
-  }
-
-  .chart-box {
-    max-width: 260px;
   }
 }
 </style>
@@ -104,7 +97,7 @@ canvas {
 
     <div class="center">
       <h2 id="incomeText">0</h2>
-      <span>Income</span>
+      <div>Income</div>
     </div>
   </div>
 
@@ -128,7 +121,7 @@ const colors = [
 const MAX = 15;
 let expenseInputs = [];
 
-/* INITIAL */
+/* INIT */
 for (let i = 0; i < 4; i++) addExpense();
 
 function addExpense() {
@@ -153,7 +146,7 @@ function handleAutoAdd() {
   if (last.value !== "") addExpense();
 }
 
-/* RESPONSIVE CANVAS */
+/* RESIZE */
 function resizeCanvas() {
   const size = canvas.clientWidth;
   canvas.width = size;
@@ -189,7 +182,7 @@ function draw() {
   }
 
   let start = -Math.PI / 2;
-  const gap = 0.02;
+  const gap = 0.025; // slightly bigger for visibility
   let used = 0;
 
   values.forEach((value, i) => {
@@ -198,6 +191,7 @@ function draw() {
     let inside = Math.max(0, Math.min(value, income - used));
     let overflow = Math.max(0, value - inside);
 
+    // INSIDE
     if (inside > 0) {
       let angle = (inside / income) * Math.PI * 2;
 
@@ -219,22 +213,25 @@ function draw() {
       used += inside;
     }
 
+    // OVERFLOW (WITH SAME GAP LOGIC)
     if (overflow > 0) {
-      let overflowAngle = (overflow / income) * Math.PI * 2;
+      let angle = (overflow / income) * Math.PI * 2;
 
-      ctx.beginPath();
-      ctx.arc(
-        center,
-        center,
-        overflowRadius,
-        start,
-        start + overflowAngle
-      );
-      ctx.strokeStyle = colors[i % colors.length];
-      ctx.lineWidth = thickness * 0.3;
-      ctx.stroke();
+      if (angle > gap) {
+        ctx.beginPath();
+        ctx.arc(
+          center,
+          center,
+          overflowRadius,
+          start + gap/2,
+          start + gap/2 + (angle - gap)
+        );
+        ctx.strokeStyle = colors[i % colors.length];
+        ctx.lineWidth = thickness * 0.3;
+        ctx.stroke();
+      }
 
-      start += overflowAngle;
+      start += angle;
     }
   });
 
