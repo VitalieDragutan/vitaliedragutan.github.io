@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <meta charset="UTF-8" />
@@ -126,7 +126,7 @@ body{
 
 .left{
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   gap:14px;
 }
 
@@ -145,6 +145,18 @@ body{
 .label{
   font-size:15px;
   font-weight:600;
+}
+
+.label-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.example{
+  font-size:12px;
+  color:#6d6d6d;
+  line-height:1.4;
 }
 
 .amount{
@@ -299,16 +311,20 @@ canvas{
         </div>
 
         <div class="section-sub">
-          What is your monthly net income?
-          In addition to salary, other income
-          such as rent, dividends, etc. are included.
+          Introdu venitul net lunar al gospodăriei tale, inclusiv salarii, bonusuri, dividende sau alte surse de venit.
         </div>
 
         <div class="row">
 
           <div class="left">
-            <div class="icon">💰</div>
-            <div class="label">Household income</div>
+            <div class="icon">💵</div>
+
+            <div class="label-wrap">
+              <div class="label">Venitul gospodăriei</div>
+              <div class="example">
+                Salarii, bonusuri, dividende și altele
+              </div>
+            </div>
           </div>
 
           <div class="amount">
@@ -319,7 +335,7 @@ canvas{
               min="0"
               placeholder="0"
             />
-            <span class="currency">€</span>
+            <span class="currency">MDL</span>
           </div>
 
         </div>
@@ -335,114 +351,263 @@ canvas{
         </div>
 
         <div class="section-sub">
-          What do you spend money on each month?
-          Estimate your monthly costs in the following categories.
+          Estimează cheltuielile tale lunare pentru fiecare categorie de mai jos.
         </div>
+
+        <!-- LOCUINTA -->
 
         <div class="row">
           <div class="left">
-            <div class="icon">🏡</div>
-            <div class="label">Housing</div>
+            <div class="icon">🏠</div>
+
+            <div class="label-wrap">
+              <div class="label">Locuință</div>
+              <div class="example">
+                Chirie, ipotecă și altele
+              </div>
+            </div>
           </div>
+
+          <div class="amount">
+            <input class="expense-input" type="number" value="" min="0" placeholder="0">
+            <span class="currency">MDL</span>
+          </div>
+        </div>
+
+        <!-- UTILITATI -->
+
+        <div class="row">
+          <div class="left">
+            <div class="icon">💡</div>
+
+            <div class="label-wrap">
+              <div class="label">Utilități</div>
+              <div class="example">
+                Electricitate, internet, întreținere bloc și altele
+              </div>
+            </div>
+          </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- DATORII -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">☂️</div>
-            <div class="label">Insurances</div>
+            <div class="icon">💳</div>
+
+            <div class="label-wrap">
+              <div class="label">Datorii</div>
+              <div class="example">
+                Credite, împrumuturi și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- MANCARE -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">🥕</div>
-            <div class="label">Food & drugstore</div>
+            <div class="icon">🍽️</div>
+
+            <div class="label-wrap">
+              <div class="label">Mâncare</div>
+              <div class="example">
+                Mese zilnice, supermarket, gustări și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- TRANSPORT -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">🚎</div>
-            <div class="label">Mobility</div>
+            <div class="icon">🚗</div>
+
+            <div class="label-wrap">
+              <div class="label">Transport</div>
+              <div class="example">
+                Combustibil, transport public, leasing și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- SANATATE -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">👕</div>
-            <div class="label">Shopping</div>
+            <div class="icon">🏥</div>
+
+            <div class="label-wrap">
+              <div class="label">Sănătate & asigurări</div>
+              <div class="example">
+                Medicamente, asigurare medicală, tratamente și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- INGRIJIRE PERSONALA -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">🎧</div>
-            <div class="label">Subscriptions</div>
+            <div class="icon">🧴</div>
+
+            <div class="label-wrap">
+              <div class="label">Îngrijire personală</div>
+              <div class="example">
+                Frizer, igienă, cosmetică și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- CASA -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">🍸</div>
-            <div class="label">Going out</div>
+            <div class="icon">🧹</div>
+
+            <div class="label-wrap">
+              <div class="label">Casă</div>
+              <div class="example">
+                Curățenie, reparații, obiecte casă și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- ABONAMENTE -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">⛱️</div>
-            <div class="label">Experiences</div>
+            <div class="icon">📱</div>
+
+            <div class="label-wrap">
+              <div class="label">Abonamente</div>
+              <div class="example">
+                Telefon, sală, aplicații și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- SHOPPING -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">🤝</div>
-            <div class="label">Donations</div>
+            <div class="icon">🛍️</div>
+
+            <div class="label-wrap">
+              <div class="label">Shopping</div>
+              <div class="example">
+                Haine, cadouri, accesorii și altele
+              </div>
+            </div>
           </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
           </div>
         </div>
 
+        <!-- DISTRACTIE -->
+
         <div class="row">
           <div class="left">
-            <div class="icon">✌️</div>
-            <div class="label">Other</div>
+            <div class="icon">🍷</div>
+
+            <div class="label-wrap">
+              <div class="label">Ieșiri & Distracție</div>
+              <div class="example">
+                Restaurante, cafenele, evenimente și altele
+              </div>
+            </div>
           </div>
+
+          <div class="amount">
+            <input class="expense-input" type="number" value="" min="0" placeholder="0">
+            <span class="currency">€</span>
+          </div>
+        </div>
+
+        <!-- DONATII -->
+
+        <div class="row">
+          <div class="left">
+            <div class="icon">❤️</div>
+
+            <div class="label-wrap">
+              <div class="label">Donații</div>
+              <div class="example">
+                Cauze caritabile
+              </div>
+            </div>
+          </div>
+
+          <div class="amount">
+            <input class="expense-input" type="number" value="" min="0" placeholder="0">
+            <span class="currency">€</span>
+          </div>
+        </div>
+
+        <!-- ALTE -->
+
+        <div class="row">
+          <div class="left">
+            <div class="icon">🧾</div>
+
+            <div class="label-wrap">
+              <div class="label">Alte</div>
+              <div class="example">
+                Tot ce nu se potrivește mai sus
+              </div>
+            </div>
+          </div>
+
           <div class="amount">
             <input class="expense-input" type="number" value="" min="0" placeholder="0">
             <span class="currency">€</span>
